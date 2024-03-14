@@ -28,7 +28,6 @@ net.minestom.server.entity.ai
 net.minestom.server.entity.ai.goal
 net.minestom.server.entity.ai.target
 net.minestom.server.entity.damage
-net.minestom.server.entity.fakeplayer
 net.minestom.server.entity.metadata
 net.minestom.server.entity.metadata.ambient
 net.minestom.server.entity.metadata.animal
@@ -113,6 +112,7 @@ net.minestom.server.network.packet.server.status
 net.minestom.server.network.player
 net.minestom.server.network.socket
 net.minestom.server.particle
+net.minestom.server.particle.data
 net.minestom.server.permission
 net.minestom.server.ping
 net.minestom.server.potion
