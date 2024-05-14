@@ -111,8 +111,8 @@ extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/ja
 <h2>Method Summary</h2>
 <div id="method-summary-table">
 <div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab3" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab3', 3)" class="table-tab">Abstract Methods</button><button id="method-summary-table-tab5" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab5', 3)" class="table-tab">Default Methods</button></div>
-<div id="method-summary-table.tabpanel" role="tabpanel">
-<div class="summary-table three-column-summary" aria-labelledby="method-summary-table-tab0">
+<div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
+<div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
@@ -171,12 +171,16 @@ extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/ja
  @NotNull <a href="ExecutionType.html" title="enum class in net.minestom.server.timer">ExecutionType</a>&nbsp;executionType)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default @NotNull <a href="Task.html" title="interface in net.minestom.server.timer">Task</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#submitTask(java.util.function.Supplier)" class="member-name-link">submitTask</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="TaskSchedule.html" title="interface in net.minestom.server.timer">TaskSchedule</a>&gt;&nbsp;task)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#scheduleTask(java.util.function.Supplier,net.minestom.server.timer.TaskSchedule)" class="member-name-link">scheduleTask</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="TaskSchedule.html" title="interface in net.minestom.server.timer">TaskSchedule</a>&gt;&nbsp;task,
+ @NotNull <a href="TaskSchedule.html" title="interface in net.minestom.server.timer">TaskSchedule</a>&nbsp;delay)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="Task.html" title="interface in net.minestom.server.timer">Task</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#submitTask(java.util.function.Supplier,net.minestom.server.timer.ExecutionType)" class="member-name-link">submitTask</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="TaskSchedule.html" title="interface in net.minestom.server.timer">TaskSchedule</a>&gt;&nbsp;task,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default @NotNull <a href="Task.html" title="interface in net.minestom.server.timer">Task</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#submitTask(java.util.function.Supplier)" class="member-name-link">submitTask</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="TaskSchedule.html" title="interface in net.minestom.server.timer">TaskSchedule</a>&gt;&nbsp;task)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="Task.html" title="interface in net.minestom.server.timer">Task</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#submitTask(java.util.function.Supplier,net.minestom.server.timer.ExecutionType)" class="member-name-link">submitTask</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="TaskSchedule.html" title="interface in net.minestom.server.timer">TaskSchedule</a>&gt;&nbsp;task,
  @NotNull <a href="ExecutionType.html" title="enum class in net.minestom.server.timer">ExecutionType</a>&nbsp;executionType)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Submits a new task with custom scheduling logic.</div>
 </div>
 </div>
@@ -289,6 +293,16 @@ extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/ja
  @NotNull <a href="TaskSchedule.html" title="interface in net.minestom.server.timer">TaskSchedule</a>&nbsp;delay,
  @NotNull
  @NotNull <a href="TaskSchedule.html" title="interface in net.minestom.server.timer">TaskSchedule</a>&nbsp;repeat)</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="scheduleTask(java.util.function.Supplier,net.minestom.server.timer.TaskSchedule)">
+<h3>scheduleTask</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">default</span>&nbsp;<span class="return-type">@NotNull <a href="Task.html" title="interface in net.minestom.server.timer">Task</a></span>&nbsp;<span class="element-name">scheduleTask</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="TaskSchedule.html" title="interface in net.minestom.server.timer">TaskSchedule</a>&gt;&nbsp;task,
+ @NotNull
+ @NotNull <a href="TaskSchedule.html" title="interface in net.minestom.server.timer">TaskSchedule</a>&nbsp;delay)</span></div>
 </section>
 </li>
 <li>
