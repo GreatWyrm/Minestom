@@ -118,7 +118,7 @@ public class PacketWriteReadTest {
                                         new Recipe.Ingredient(List.of(ItemStack.of(Material.COAST_ARMOR_TRIM_SMITHING_TEMPLATE))),
                                         new Recipe.Ingredient(List.of(ItemStack.of(Material.COAL))))
                         )
-                )));
+                ), List.of()));
 
         SERVER_PACKETS.add(new DestroyEntitiesPacket(List.of(5, 5, 5)));
         SERVER_PACKETS.add(new DisconnectPacket(COMPONENT));

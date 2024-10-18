@@ -1,20 +1,22 @@
 package net.minestom.server.recipe;
 
 import net.minestom.server.entity.Player;
+import net.minestom.server.item.ItemStack;
+import net.minestom.server.item.Material;
 import net.minestom.server.network.packet.server.CachedPacket;
 import net.minestom.server.network.packet.server.SendablePacket;
 import net.minestom.server.network.packet.server.play.DeclareRecipesPacket;
+import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
 public final class RecipeManager {
     private final CachedPacket declareRecipesPacket = new CachedPacket(this::createDeclareRecipesPacket);
     private final Map<Recipe, Predicate<Player>> recipes = new ConcurrentHashMap<>();
+    private final Map<NamespaceID, List<Integer>> specialItemPropertyOverrides = new HashMap<>();
 
     public void addRecipe(@NotNull Recipe recipe, @NotNull Predicate<Player> predicate) {
         var previous = recipes.put(recipe, predicate);
@@ -33,6 +35,11 @@ public final class RecipeManager {
         }
     }
 
+    public void addItemPropertyOverride(@NotNull NamespaceID namespaceID, @NotNull Material material) {
+        specialItemPropertyOverrides.computeIfAbsent(namespaceID, id -> new ArrayList<>());
+        specialItemPropertyOverrides.get(namespaceID).add(material.id());
+    }
+
     public List<Recipe> consumeRecipes(Player player) {
         return recipes.entrySet().stream()
                 .filter(entry -> entry.getValue().test(player))
@@ -49,6 +56,10 @@ public final class RecipeManager {
     }
 
     private @NotNull DeclareRecipesPacket createDeclareRecipesPacket() {
-        return new DeclareRecipesPacket(List.copyOf(recipes.keySet()));
+        List<Recipe.RecipeEntry> entryList = new ArrayList<>();
+        for (Recipe recipe : recipes.keySet()) {
+            entryList.add(new Recipe.RecipeEntry(List.of(Material.IRON_INGOT.id()), 0));
+        }
+        return new DeclareRecipesPacket(specialItemPropertyOverrides, entryList);
     }
 }

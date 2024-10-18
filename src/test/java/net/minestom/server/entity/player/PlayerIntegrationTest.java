@@ -81,7 +81,7 @@ public class PlayerIntegrationTest {
                 Locale.US, (byte) 16,
                 ChatMessageType.FULL, true,
                 (byte) 127, ClientSettings.MainHand.LEFT,
-                true, true
+                true, true, ClientSettings.ParticleSetting.ALL
         ));
 
         var instance = env.createFlatInstance();
@@ -179,7 +179,7 @@ public class PlayerIntegrationTest {
         // Ensure that the player was sent the permission levels
         for (var statusPacket : trackerStatus.collect()) {
             assertEquals(player.getEntityId(), statusPacket.entityId());
-            assertEquals(24 + TEST_PERMISSION_LEVEL, statusPacket.status()); // TODO: Remove magic value of 24
+            assertEquals(EntityStatuses.Player.PERMISSION_LEVEL_0 + TEST_PERMISSION_LEVEL, statusPacket.status());
         }
     }
 

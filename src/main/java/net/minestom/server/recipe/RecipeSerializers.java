@@ -3,6 +3,7 @@ package net.minestom.server.recipe;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.network.NetworkBuffer;
 import net.minestom.server.network.NetworkBufferTemplate;
+import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,6 +43,41 @@ public final class RecipeSerializers {
     public static final Type<Ingredient> INGREDIENT = NetworkBufferTemplate.template(
             ItemStack.STRICT_NETWORK_TYPE.list(MAX_INGREDIENTS), Ingredient::items,
             Ingredient::new
+    );
+
+    // Seems to be an off by one for some reason, need to figure out why
+    public static final Type<List<Integer>> SIZE_INCREMENTED_LIST = new Type<>() {
+        @Override
+        public List<Integer> read(@NotNull NetworkBuffer buffer) {
+            return List.of();
+        }
+
+        @Override
+        public void write(@NotNull NetworkBuffer buffer, List<Integer> value) {
+            buffer.write(VAR_INT, value.size() + 1);
+            for (Integer integer : value) {
+                buffer.write(VAR_INT, integer);
+            }
+        }
+    };
+
+    // Weird object after size incremented list. It seems to just be fine with 1 for now
+    public static final Type<Integer> UNKNOWN = new Type<>() {
+        @Override
+        public void write(@NotNull NetworkBuffer buffer, Integer value) {
+            buffer.write(VAR_INT, 1);
+        }
+
+        @Override
+        public Integer read(@NotNull NetworkBuffer buffer) {
+            return 1;
+        }
+    };
+
+    public static final Type<RecipeEntry> RECIPE_ENTRY = NetworkBufferTemplate.template(
+            SIZE_INCREMENTED_LIST, RecipeEntry::ingredientIds,
+            UNKNOWN, RecipeEntry::unknown,
+            RecipeEntry::new
     );
 
     public static final Type<Shaped> SHAPED = new Type<>() {
@@ -192,6 +228,15 @@ public final class RecipeSerializers {
             Enum(Crafting.class), DecoratedPot::category, DecoratedPot::new
     );
 
+    public static final Type<Transmute> TRANSMUTE = NetworkBufferTemplate.template(
+            STRING, Transmute::group,
+            Enum(Crafting.class), Transmute::category,
+            INGREDIENT, Transmute::input,
+            INGREDIENT, Transmute::material,
+            STRING.transform(NamespaceID::from, NamespaceID::asString), Transmute::result,
+            Transmute::new
+    );
+
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static Type<Data> dataSerializer(RecipeType type) {
@@ -208,9 +253,7 @@ public final class RecipeSerializers {
             case SPECIAL_TIPPEDARROW -> TIPPED_ARROW;
             case SPECIAL_BANNERDUPLICATE -> BANNER_DUPLICATE;
             case SPECIAL_SHIELDDECORATION -> SHIELD_DECORATION;
-//            case SPECIAL_SHULKERBOXCOLORING -> SPECIAL_SHULKER_BOX_COLORING;
-//            case SPECIAL_SUSPICIOUSSTEW -> SUSPICIOUS_STEW;
-            case TRANSMUTE -> null; // TODO(1.21.2)
+            case TRANSMUTE -> TRANSMUTE;
             case SPECIAL_REPAIRITEM -> REPAIR_ITEM;
             case SMELTING -> SMELTING;
             case BLASTING -> BLASTING;
@@ -246,6 +289,7 @@ public final class RecipeSerializers {
             case SpecialRepairItem ignored -> RecipeType.SPECIAL_REPAIRITEM;
             case SpecialShieldDecoration ignored -> RecipeType.SPECIAL_SHIELDDECORATION;
             case SpecialTippedArrow ignored -> RecipeType.SPECIAL_TIPPEDARROW;
+            case Transmute ignored -> RecipeType.TRANSMUTE;
         };
     }
 }

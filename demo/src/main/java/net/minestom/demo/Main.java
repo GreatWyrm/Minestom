@@ -21,6 +21,7 @@ import net.minestom.server.item.Material;
 import net.minestom.server.ping.ResponseData;
 import net.minestom.server.recipe.Recipe;
 import net.minestom.server.recipe.RecipeCategory;
+import net.minestom.server.utils.NamespaceID;
 import net.minestom.server.utils.identity.NamedAndIdentified;
 import net.minestom.server.utils.time.TimeUnit;
 
@@ -120,7 +121,7 @@ public class Main {
 
         var ironBlockRecipe = new Recipe(
                 "minestom:test",
-                new Recipe.Shaped("", RecipeCategory.Crafting.MISC, 2, 2,
+                new Recipe.Shaped("None", RecipeCategory.Crafting.MISC, 2, 2,
                         List.of(
                                 new Recipe.Ingredient(ItemStack.of(Material.IRON_INGOT)),
                                 new Recipe.Ingredient(ItemStack.of(Material.IRON_INGOT)),
@@ -128,6 +129,7 @@ public class Main {
                                 new Recipe.Ingredient(ItemStack.of(Material.IRON_INGOT))
                         ), ItemStack.of(Material.IRON_BLOCK), true));
         MinecraftServer.getRecipeManager().addRecipe(ironBlockRecipe);
+        MinecraftServer.getRecipeManager().addItemPropertyOverride(NamespaceID.from("minecraft:furnace_input"), Material.CREEPER_HEAD);
         var recipe = new Recipe(
                 "minestom:test2",
                 new Recipe.Shapeless("abc",
@@ -137,16 +139,17 @@ public class Main {
                         ),
                         ItemStack.builder(Material.GOLD_BLOCK)
                                 .set(ItemComponent.CUSTOM_NAME, Component.text("abc"))
-                                .build())
+                                .build()
+                )
         );
-        MinecraftServer.getRecipeManager().addRecipe(recipe);
+        //MinecraftServer.getRecipeManager().addRecipe(recipe);
 
         new PlayerInit().init();
 
 //        VelocityProxy.enable("abcdef");
         //BungeeCordProxy.enable();
 
-        MojangAuth.init();
+        //MojangAuth.init();
 
         // useful for testing - we don't need to worry about event calls so just set this to a long time
         OpenToLAN.open(new OpenToLANConfig().eventCallDelay(Duration.of(1, TimeUnit.DAY)));

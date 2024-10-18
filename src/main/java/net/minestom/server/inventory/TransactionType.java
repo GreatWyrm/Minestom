@@ -39,7 +39,7 @@ public interface TransactionType {
                 final int itemStackAmount = itemStack.amount();
                 final int totalAmount = itemStackAmount + itemAmount;
                 if (!MathUtils.isBetween(totalAmount, 0, itemStack.maxStackSize())) {
-                    // Slot cannot accept the whole item, reduce amount to 'itemStack'
+                    // Slot cannot accept the whole item, reduce amount to 'result'
                     itemChangesMap.put(i, inventoryItem.withAmount(maxSize));
                     itemStack = itemStack.withAmount(totalAmount - maxSize);
                 } else {
@@ -63,7 +63,7 @@ public interface TransactionType {
             final int currentSize = itemStack.amount();
 
             if (!MathUtils.isBetween(currentSize, 0, maxSize)) {
-                // Slot cannot accept the whole item, reduce amount to 'itemStack'
+                // Slot cannot accept the whole item, reduce amount to 'result'
                 itemChangesMap.put(i, itemStack.withAmount(maxSize));
                 itemStack = itemStack.withAmount(currentSize - maxSize);
             } else {

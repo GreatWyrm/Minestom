@@ -2,15 +2,20 @@ package net.minestom.server.recipe;
 
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.network.NetworkBuffer;
+import net.minestom.server.utils.NamespaceID;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 
 public record Recipe(@NotNull String id, @NotNull Data data) {
     public static final int MAX_INGREDIENTS = 128;
 
     sealed public interface Data {
     }
+
+    public record RecipeEntry(List<Integer> ingredientIds, int unknown) { }
 
     public record Shaped(String group, RecipeCategory.Crafting category,
                          int width, int height, List<Ingredient> ingredients,
@@ -72,6 +77,10 @@ public record Recipe(@NotNull String id, @NotNull Data data) {
     public record SmithingTrim(Ingredient template,
                                Ingredient base, Ingredient addition) implements Data {
         public static final NetworkBuffer.Type<SmithingTrim> SERIALIZER = RecipeSerializers.SMITHING_TRIM;
+    }
+
+    public record Transmute(String group, RecipeCategory.Crafting category, Ingredient input, Ingredient material, NamespaceID result) implements Data {
+        public static final NetworkBuffer.Type<Transmute> SERIALIZER = RecipeSerializers.TRANSMUTE;
     }
 
     public record Ingredient(@NotNull List<@NotNull ItemStack> items) {
