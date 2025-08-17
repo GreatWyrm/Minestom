@@ -96,7 +96,7 @@ public final class PacketListenerManager {
         setPlayListener(ClientAdvancementTabPacket.class, AdvancementTabListener::listener);
         setPlayListener(ClientSpectatePacket.class, SpectateListener::listener);
         setPlayListener(ClientEditBookPacket.class, BookListener::listener);
-        setPlayListener(ClientChatSessionUpdatePacket.class, (packet, player) -> {/* empty */});
+        setPlayListener(ClientChatSessionUpdatePacket.class, ChatSessionListener::sessionListener);
         setPlayListener(ClientChunkBatchReceivedPacket.class, ChunkBatchListener::batchReceivedListener);
         setPlayListener(ClientPingRequestPacket.class, PlayPingListener::requestListener);
         setListener(ConnectionState.PLAY, ClientCookieResponsePacket.class, CookieListener::handleCookieResponse);

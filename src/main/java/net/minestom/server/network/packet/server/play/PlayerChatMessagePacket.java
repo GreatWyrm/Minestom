@@ -54,4 +54,10 @@ public record PlayerChatMessagePacket(int globalIndex, UUID sender, int index, b
                 messageBody, operator.apply(unsignedContent), filterMask,
                 msgTypeId, operator.apply(msgTypeName), operator.apply(msgTypeTarget));
     }
+
+    public PlayerChatMessagePacket copyWithTargetNameChange(UnaryOperator<Component> operator) {
+        return new PlayerChatMessagePacket(globalIndex, sender, index, signature,
+                messageBody, unsignedContent, filterMask,
+                msgTypeId, msgTypeName, operator.apply(msgTypeTarget));
+    }
 }

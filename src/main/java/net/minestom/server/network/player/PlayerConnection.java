@@ -3,6 +3,7 @@ package net.minestom.server.network.player;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.crypto.ChatSession;
 import net.minestom.server.crypto.PlayerPublicKey;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;
@@ -23,10 +24,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.net.SocketAddress;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -37,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class PlayerConnection {
     private Player player;
     private volatile ConnectionState connectionState;
-    private PlayerPublicKey playerPublicKey;
+    private ChatSession chatSession;
     volatile boolean online;
 
     private LoginPluginMessageProcessor loginPluginMessageProcessor = new LoginPluginMessageProcessor(this);
@@ -199,12 +197,22 @@ public abstract class PlayerConnection {
         return connectionState;
     }
 
-    public PlayerPublicKey playerPublicKey() {
-        return playerPublicKey;
+    public @Nullable PlayerPublicKey playerPublicKey() {
+        if (chatSession == null) {
+            return null;
+        }
+        return chatSession.publicKey();
     }
 
-    public void setPlayerPublicKey(PlayerPublicKey playerPublicKey) {
-        this.playerPublicKey = playerPublicKey;
+    public @Nullable UUID sessionId() {
+        if (chatSession == null) {
+            return null;
+        }
+        return chatSession.sessionId();
+    }
+
+    public void setChatSession(ChatSession chatSession) {
+        this.chatSession = chatSession;
     }
 
     public void storeCookie(String key, byte [] data) {

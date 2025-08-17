@@ -21,6 +21,8 @@ public final class ServerFlag {
     public static final int SEND_LIGHT_AFTER_BLOCK_PLACEMENT_DELAY = intProperty("minestom.send-light-after-block-placement-delay", 100);
     public static final long LOGIN_PLUGIN_MESSAGE_TIMEOUT = longProperty("minestom.login-plugin-message-timeout", 5_000); // 5s
     public static final long KNOWN_PACKS_RESPONSE_TIMEOUT = longProperty("minestom.known-packs-response-timeout", 5 * 60_000); // 5m
+    public static final boolean CONVERT_PLAYER_CHAT_TO_SYSTEM_CHAT = booleanProperty("minestom.convert-to-system-chat", true);
+    public static final boolean ENFORCE_SECURE_CHAT = booleanProperty("minestom.enforce-secure-chat", false);
 
     // Network rate limiting
     public static final int PLAYER_PACKET_PER_TICK = intProperty("minestom.packet-per-tick", 50);

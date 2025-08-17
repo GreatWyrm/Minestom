@@ -1,5 +1,6 @@
 package net.minestom.server.network.packet.client.play;
 
+import net.minestom.server.crypto.LastSeenMessages;
 import net.minestom.server.network.NetworkBuffer;
 import net.minestom.server.network.NetworkBufferTemplate;
 import net.minestom.server.network.packet.client.ClientPacket;
@@ -18,7 +19,7 @@ public record ClientChatMessagePacket(String message, long timestamp,
             LONG, ClientChatMessagePacket::salt,
             FixedRawBytes(256).optional(), ClientChatMessagePacket::signature,
             VAR_INT, ClientChatMessagePacket::ackOffset,
-            FixedBitSet(20), ClientChatMessagePacket::ackList,
+            FixedBitSet(LastSeenMessages.MAX_ENTRIES), ClientChatMessagePacket::ackList,
             BYTE, ClientChatMessagePacket::checksum,
             ClientChatMessagePacket::new
     );

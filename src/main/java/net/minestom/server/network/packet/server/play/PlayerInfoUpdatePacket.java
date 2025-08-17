@@ -104,7 +104,7 @@ public record PlayerInfoUpdatePacket(
                                 username = buffer.read(STRING);
                                 properties = buffer.read(Property.SERIALIZER.list(GameProfile.MAX_PROPERTIES));
                             }
-                            case INITIALIZE_CHAT -> chatSession = ChatSession.SERIALIZER.read(buffer);
+                            case INITIALIZE_CHAT -> chatSession = ChatSession.SERIALIZER.optional().read(buffer);
                             case UPDATE_GAME_MODE -> gameMode = buffer.read(NetworkBuffer.Enum(GameMode.class));
                             case UPDATE_LISTED -> listed = buffer.read(BOOLEAN);
                             case UPDATE_LATENCY -> latency = buffer.read(VAR_INT);

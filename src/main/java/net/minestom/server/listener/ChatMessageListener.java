@@ -1,6 +1,7 @@
 package net.minestom.server.listener;
 
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.ServerFlag;
 import net.minestom.server.command.CommandManager;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.EventDispatcher;
@@ -58,11 +59,14 @@ public class ChatMessageListener {
 
             if (!recipients.isEmpty()) {
                 // delegate to the messenger to avoid sending messages we shouldn't be
-                Messenger.sendMessage(
-                        recipients,
-                        playerChatEvent.getFormattedMessage(),
-                        ChatPosition.CHAT,
-                        player.getUuid());
+                if (ServerFlag.CONVERT_PLAYER_CHAT_TO_SYSTEM_CHAT) {
+                    Messenger.sendSystemMessage(
+                            recipients,
+                            playerChatEvent.getFormattedMessage(),
+                            ChatPosition.CHAT);
+                } else {
+                    Messenger.sendSignedMessage(recipients, player, playerChatEvent.getFormattedMessage(), packet);
+                }
             }
         });
     }

@@ -1,12 +1,13 @@
 package net.minestom.server.crypto;
 
 import net.minestom.server.network.NetworkBuffer;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.BitSet;
 
 import static net.minestom.server.network.NetworkBuffer.BITSET;
 
-public record FilterMask(Type type, BitSet mask) {
+public record FilterMask(Type type, @Nullable BitSet mask) {
     public static final NetworkBuffer.Type<FilterMask> SERIALIZER = new NetworkBuffer.Type<>() {
         @Override
         public void write(NetworkBuffer buffer, FilterMask value) {

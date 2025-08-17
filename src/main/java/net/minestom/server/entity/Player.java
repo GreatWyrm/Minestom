@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.longs.LongArrayPriorityQueue;
 import it.unimi.dsi.fastutil.longs.LongPriorityQueue;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.bossbar.BossBar;
+import net.kyori.adventure.chat.SignedMessage;
 import net.kyori.adventure.dialog.DialogLike;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.inventory.Book;
@@ -32,6 +33,8 @@ import net.minestom.server.collision.BoundingBox;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.component.DataComponents;
 import net.minestom.server.coordinate.*;
+import net.minestom.server.crypto.LastSeenMessages;
+import net.minestom.server.crypto.MessageSignature;
 import net.minestom.server.dialog.Dialog;
 import net.minestom.server.entity.attribute.Attribute;
 import net.minestom.server.entity.metadata.LivingEntityMeta;
@@ -57,13 +60,13 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.item.component.WrittenBookContent;
 import net.minestom.server.listener.manager.PacketListenerManager;
-import net.minestom.server.message.ChatPosition;
 import net.minestom.server.message.Messenger;
 import net.minestom.server.monitoring.EventsJFR;
 import net.minestom.server.network.ConnectionManager;
 import net.minestom.server.network.ConnectionState;
 import net.minestom.server.network.PlayerProvider;
 import net.minestom.server.network.packet.client.ClientPacket;
+import net.minestom.server.network.packet.client.play.ClientChatMessagePacket;
 import net.minestom.server.network.packet.server.SendablePacket;
 import net.minestom.server.network.packet.server.ServerPacket;
 import net.minestom.server.network.packet.server.common.*;
@@ -103,6 +106,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
@@ -150,6 +154,13 @@ public class Player extends LivingEntity implements CommandSender, HoverEventSou
     private int dimensionTypeId;
     private GameMode gameMode;
     private WorldPos deathLocation;
+
+    // Chat
+    private Instant lastReceivedChatMessageTimestamp;
+    private byte[] previousSignature;
+    private int chatSessionIndex = 0;
+    private ArrayList<MessageSignature> pendingAcknowledgement = new ArrayList<>();
+    private ArrayList<MessageSignature> lastSeenSignatures = new ArrayList<>(21);
 
     /**
      * Keeps track of what chunks are sent to the client, this defines the center of the loaded area
@@ -292,7 +303,7 @@ public class Player extends LivingEntity implements CommandSender, HoverEventSou
                 dimensionTypeId, spawnInstance.getDimensionName(), 0,
                 gameMode, null, false, levelFlat,
                 deathLocation, portalCooldown, DEFAULT_SEA_LEVEL,
-                true);
+                ServerFlag.ENFORCE_SECURE_CHAT);
         sendPacket(joinGamePacket);
 
         // Start sending inventory updates
@@ -429,6 +440,60 @@ public class Player extends LivingEntity implements CommandSender, HoverEventSou
 
         // Tick event
         EventDispatcher.call(new PlayerTickEvent(this));
+    }
+
+    public int chatSessionIndex() {
+        return chatSessionIndex;
+    }
+
+    public void incrementChatSessionIndex() {
+        chatSessionIndex++;
+    }
+
+    public void resetChatSession() {
+        chatSessionIndex = 0;
+        pendingAcknowledgement.clear();
+        lastSeenSignatures.clear();
+    }
+
+    public void addToPendingSeenMessages(byte[] signature) {
+        pendingAcknowledgement.add(new MessageSignature(signature));
+    }
+
+    @ApiStatus.Internal
+    public void updateLastSeenList(int amount) {
+        for (int i = 0; i < amount; i++) {
+            this.pendingAcknowledgement.removeFirst(); // Pop the first element a number of times equal to the acknowledgement offset
+        }
+        // Move last seen
+        lastSeenSignatures.clear();
+        lastSeenSignatures.addAll(this.pendingAcknowledgement);
+    }
+
+    @ApiStatus.Internal
+    public List<MessageSignature> getLastSeenFromBitSet(BitSet bitSet) {
+        List<MessageSignature> signatures = new ArrayList<>();
+        for (int i = 0; i < LastSeenMessages.MAX_ENTRIES; i++) {
+            if (bitSet.get(i)) {
+                if (i >= lastSeenSignatures.size()) {
+                    // Something went wrong, return empty list
+                    return List.of();
+                } else {
+                    signatures.add(lastSeenSignatures.get(i));
+                }
+            }
+        }
+        return signatures;
+    }
+
+    @ApiStatus.Internal
+    public LastSeenMessages.Packed getLastSeenPacked() {
+        if (lastSeenSignatures.isEmpty()) return LastSeenMessages.Packed.EMPTY
+        List<MessageSignature> list = new ArrayList<>();
+        for (int i = 0; i < LastSeenMessages.MAX_ENTRIES; i++) {
+            list.add(lastSeenSignatures.get(i));
+        }
+        return new LastSeenMessages(list);
     }
 
     @Override
@@ -887,7 +952,7 @@ public class Player extends LivingEntity implements CommandSender, HoverEventSou
     @SuppressWarnings({"UnstableApiUsage", "deprecation"})
     public void sendMessage(final Identity source, final Component message, final MessageType type) {
         // Note to readers: this method may be deprecated, however it is in fact required.
-        Messenger.sendMessage(this, message, ChatPosition.fromMessageType(type), source.uuid());
+        Messenger.sendSystemMessage(this, message);
     }
 
     /**
